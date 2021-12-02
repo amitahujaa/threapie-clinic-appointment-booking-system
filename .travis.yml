@@ -1,0 +1,22 @@
+language: java
+jdk:
+  - oraclejdk8
+dist: trusty
+
+services:
+  - docker
+
+script:
+  - mvn clean verify
+  - echo $TRAVIS_BUILD_NUMBER
+  - docker build --no-cache -t $DOCKER_USER/threapie-clinic-appointment-booking-system:$TRAVIS_BUILD_NUMBER .
+  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  - docker push $DOCKER_USER/threapie-clinic-appointment-booking-system:$TRAVIS_BUILD_NUMBER
+  - cp myfile ss.pem
+  - chmod 400 ss.pem
+  - ssh -i "ss.pem" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $AWS_USER@$AWS_HOSTNAME docker ps -a
+  - ssh -i "ss.pem" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $AWS_USER@$AWS_HOSTNAME docker pull $DOCKER_USER/threapie-clinic-appointment-booking-system:$TRAVIS_BUILD_NUMBER
+  - ssh -i "ss.pem" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ec2-user@ec2-18-222-36-25.us-east-2.compute.amazonaws.com 'docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) -f'
+  - ssh -i "ss.pem" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $AWS_USER@$AWS_HOSTNAME docker run -d -p 8080:8080 $DOCKER_USER/threapie-clinic-appointment-booking-system:$TRAVIS_BUILD_NUMBER
+  - ssh -i "ss.pem" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $AWS_USER@$AWS_HOSTNAME docker ps -a
+  - rm -rf ss.pem

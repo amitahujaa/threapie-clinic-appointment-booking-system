@@ -1,0 +1,3 @@
+INSERT INTO booking (id, customer_id, clinic_id, service_id, date, start_time, end_time) VALUES  (1, 'ab123', 'clinic100', 'ser100', '2005-12-1', 'T22:59:59','T23:59:59');
+INSERT INTO booking (id, customer_id, clinic_id, service_id, date, start_time, end_time) VALUES  (2, 'cd123', 'clinic102', 'ser101', '2005-12-2', 'T22:59:59','T23:59:59');
+INSERT INTO booking (id, customer_id, clinic_id, service_id, date, start_time, end_time) VALUES  (3, 'ef123', 'clinic103', 'ser102', '2005-12-3', 'T22:59:59','T23:59:59');
